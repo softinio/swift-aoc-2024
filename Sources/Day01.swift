@@ -29,7 +29,12 @@ struct Day01: AdventDay {
 
   // Replace this with your solution for the second part of the day's challenge.
   func part2() -> Any {
-    // Sum the maximum entries in each set of data
-    entities.map { $0.max() ?? 0 }.reduce(0, +)
+    let left = entities.compactMap(\.first).sorted()
+    let right = entities.compactMap(\.last).sorted()
+    let similarList = left.compactMap { currentLeft in
+      let occured = right.filter { $0 == currentLeft }.count
+      return currentLeft * occured
+    }
+    return similarList.reduce(0, +)
   }
 }
