@@ -13,57 +13,49 @@ struct Day02: AdventDay {
       }
   }
 
-  func sameDirection(_ entries: [Int]) -> Bool {
-    let increasing = entries.reduce((true, nil as Int?)) { (acc, entry) in
-      let (increasing, previous) = acc
+  func isValidDecreasing(_ entry: [Int]) -> Bool {
+    guard entry.count > 1 else { return false }
+    let status = entry.reduce((true, nil as Int?)) { (acc, entry) in
+      let (valid, previous) = acc
+      if !valid { return (false, entry) }
       if let prev = previous {
-        if increasing {
-          return (entry > prev, entry)
+        if 1...3 ~= prev - entry {
+          return (true, entry)
         } else {
-          return (increasing, entry)
+          return (false, entry)
         }
       } else {
-        return (increasing, entry)
+        return (true, entry)
       }
-    }.0
-    let decreasing = entries.reduce((true, nil as Int?)) { (acc, entry) in
-      let (decreasing, previous) = acc
-      if let prev = previous {
-        if decreasing {
-          return (entry < prev, entry)
-        } else {
-          return (decreasing, entry)
-        }
-      } else {
-        return (decreasing, entry)
-      }
-    }.0
-
-    return increasing || decreasing
+    }
+    return status.0
   }
 
-  func validateEntries(_ entries: [Int]) -> Bool {
-    let diffs: [Int] = entries.reduce(([], nil as Int?)) { (acc, entry) in
-      let (diffsList, previous) = acc
+  func isValidIncreasing(_ entry: [Int]) -> Bool {
+    guard entry.count > 1 else { return false }
+    let status = entry.reduce((true, nil as Int?)) { (acc, entry) in
+      let (valid, previous) = acc
+      if !valid { return (false, entry) }
       if let prev = previous {
-        return (diffsList + [abs(entry - prev)], entry)
+        if 1...3 ~= entry - prev {
+          return (true, entry)
+        } else {
+          return (false, entry)
+        }
       } else {
-        return (diffsList, entry)
+        return (true, entry)
       }
-    }.0
-    let diffCount = diffs.count
-    let filtered = diffs.filter { 1 <= $0 && $0 <= 3 }
-    return diffCount == filtered.count
+    }
+    return status.0
+  }
+
+  func allValid(_ entries: [Int]) -> Bool {
+    return isValidDecreasing(entries) || isValidIncreasing(entries)
   }
 
   // Replace this with your solution for the first part of the day's challenge.
   func part1() -> Any {
-    let safe = entities.enumerated().compactMap { (index, entry) in
-      let valid = validateEntries(entry)
-      let sameDirection = sameDirection(entry)
-      return valid && sameDirection ? index : nil
-    }
-    return safe.count
+    entities.filter(allValid(_:)).count
   }
 
   // Replace this with your solution for the second part of the day's challenge.
