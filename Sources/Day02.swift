@@ -13,6 +13,18 @@ struct Day02: AdventDay {
       }
   }
 
+  func allValidDampened(_ entries: [Int]) -> Bool {
+    if allValid(entries) { return true }
+
+    for i in 0..<entries.count {
+      let newEntries = entries.indices.filter { $0 != i }.map { entries[$0] }
+      if allValid(newEntries) {
+        return true
+      }
+    }
+    return false
+  }
+
   func isValidDecreasing(_ entry: [Int]) -> Bool {
     guard entry.count > 1 else { return false }
     let status = entry.reduce((true, nil as Int?)) { (acc, entry) in
@@ -60,7 +72,6 @@ struct Day02: AdventDay {
 
   // Replace this with your solution for the second part of the day's challenge.
   func part2() -> Any {
-    // Sum the maximum entries in each set of data
-    entities.map { $0.max() ?? 0 }.reduce(0, +)
+    entities.filter(allValidDampened(_:)).count
   }
 }
